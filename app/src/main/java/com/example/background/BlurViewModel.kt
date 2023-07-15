@@ -70,7 +70,7 @@ class BlurViewModel(application: Application) : ViewModel() {
 
 
         //work request to save
-        var save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).build()
+        var save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).addTag(TAG_OUTPUT).build()
         continuation = continuation.then(save)
 
         continuation.enqueue()
