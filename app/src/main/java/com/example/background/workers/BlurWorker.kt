@@ -6,6 +6,8 @@ import androidx.work.WorkerParameters
 
 class BlurWorker(context: Context,parameters: WorkerParameters) : Worker(context,parameters) {
     override fun doWork(): Result {
-        TODO("Not yet implemented")
+
+        val appContext = applicationContext
+        makeStatusNotification("Bluring the image",appContext)
     }
 }
