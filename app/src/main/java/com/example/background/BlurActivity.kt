@@ -18,6 +18,7 @@ package com.example.background
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import com.example.background.databinding.ActivityBlurBinding
 
+private const val TAG = "BlurActivity"
 class BlurActivity : AppCompatActivity() {
 
     private val viewModel: BlurViewModel by viewModels {
@@ -41,13 +43,13 @@ class BlurActivity : AppCompatActivity() {
 
         binding.goButton.setOnClickListener { viewModel.applyBlur(blurLevel) }
         viewModel.outputWorkInfo.observe(this,workInfoObserver())
+
         binding.seeFileButton.setOnClickListener {
             viewModel.outputUri?.let { currentUri ->
-                val action = Intent(Intent.ACTION_VIEW,currentUri)
-                action.resolveActivity(packageManager)?.run {
-                    startActivity(action)
+                val actionView = Intent(Intent.ACTION_VIEW, currentUri)
+                actionView.resolveActivity(packageManager)?.run {
+                    startActivity(actionView)
                 }
-
             }
         }
     }
@@ -60,7 +62,14 @@ class BlurActivity : AppCompatActivity() {
 
             if (workInfo.state.isFinished) {
                 showWorkFinished()
-                binding.seeFileButton.visibility = View.VISIBLE
+
+                val outputImageUri = workInfo.outputData.getString(KEY_IMAGE_URI)
+
+                // If there is an output file show "See File" button
+                if (!outputImageUri.isNullOrEmpty()) {
+                    viewModel.setOutputUri(outputImageUri)
+                    binding.seeFileButton.visibility = View.VISIBLE
+                }
             } else {
                 showWorkInProgress()
             }
