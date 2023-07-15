@@ -14,6 +14,7 @@ class BlurWorker(context: Context, parameters: WorkerParameters) : Worker(contex
 
         val picture = BitmapFactory
             .decodeResource(appContext.resources, R.drawable.android_cupcake)
+        val output = blurBitmap(picture,appContext)
 
     }
 }
