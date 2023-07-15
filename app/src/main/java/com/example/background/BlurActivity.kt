@@ -50,6 +50,7 @@ class BlurActivity : AppCompatActivity() {
 
             if (workInfo.state.isFinished) {
                 showWorkFinished()
+                binding.seeFileButton.visibility = View.VISIBLE
             } else {
                 showWorkInProgress()
             }
