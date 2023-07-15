@@ -16,6 +16,7 @@ class BlurWorker(context: Context, parameters: WorkerParameters) : Worker(contex
             .decodeResource(appContext.resources, R.drawable.android_cupcake)
         val output = blurBitmap(picture,appContext)
         val outputUri = writeBitmapToFile(appContext,output)
+        makeStatusNotification("Output is $outputUri",appContext)
 
     }
 }
