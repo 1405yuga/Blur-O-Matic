@@ -2,6 +2,7 @@ package com.example.background.workers
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import androidx.work.Worker
@@ -27,6 +28,9 @@ class BlurWorker(context: Context, parameters: WorkerParameters) : Worker(contex
                 Log.e(TAG,"invalid input uri")
                 throw IllegalArgumentException("invalid input uri")
             }
+
+            val resolver = appContext.contentResolver
+            val picture = BitmapFactory.decodeStream(resolver.openInputStream(Uri.parse(resourceUri)))
 
             val output = blurBitmap(picture,appContext)
             val outputUri = writeBitmapToFile(appContext,output)
