@@ -41,6 +41,7 @@ class BlurViewModel(application: Application) : ViewModel() {
     }
 
     private val workmanager = WorkManager.getInstance(application)
+
     /**
      * Create the WorkRequest to apply the blur and save the resulting image
      * @param blurLevel The amount to blur the image
@@ -51,12 +52,22 @@ class BlurViewModel(application: Application) : ViewModel() {
         //work request to cleanup
         var continuation = workmanager.beginWith(OneTimeWorkRequest.from(CleanUpWorker::class.java))
 
-        //work request to blur
-        var blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
-            .setInputData(createInputDataForUri())
-            .build()
+        // Add WorkRequests to blur the image the number of times requested
+        for (i in 0 until blurLevel) {
+            //work request to blur
+            val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
 
-        continuation = continuation.then(blurRequest)
+            // Input the Uri if this is the first blur operation
+            // After the first blur operation the input will be the output of previous
+            // blur operations.
+            if (i == 0) {
+               blurBuilder.setInputData(createInputDataForUri())
+            }
+
+
+            continuation = continuation.then(blurBuilder.build())
+        }
+
 
         //work request to save
         var save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).build()
@@ -101,10 +112,10 @@ class BlurViewModel(application: Application) : ViewModel() {
         }
     }
 
-    private fun createInputDataForUri() : Data{
+    private fun createInputDataForUri(): Data {
         val builder = Data.Builder()
         imageUri?.let {
-            builder.putString(KEY_IMAGE_URI,imageUri.toString())
+            builder.putString(KEY_IMAGE_URI, imageUri.toString())
         }
         return builder.build()
     }
