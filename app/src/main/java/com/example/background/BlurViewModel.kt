@@ -22,6 +22,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.example.background.workers.BlurWorker
@@ -80,5 +81,13 @@ class BlurViewModel(application: Application) : ViewModel() {
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
         }
+    }
+
+    private fun createInputDataForUri() : Data{
+        val builder = Data.Builder()
+        imageUri?.let {
+            builder.putString(KEY_IMAGE_URI,imageUri.toString())
+        }
+        return builder.build()
     }
 }
