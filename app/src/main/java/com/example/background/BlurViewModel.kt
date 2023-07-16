@@ -88,6 +88,7 @@ class BlurViewModel(application: Application) : ViewModel() {
         //work request to save
         var save =
             OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java)
+                .setConstraints(constraints)
                 .addTag(TAG_OUTPUT)
                 .build()
 
