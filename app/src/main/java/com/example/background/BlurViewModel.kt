@@ -39,7 +39,7 @@ class BlurViewModel(application: Application) : ViewModel() {
     internal var imageUri: Uri? = null
     internal var outputUri: Uri? = null
     private val workmanager = WorkManager.getInstance(application)
-    internal var outputWorkInfo : LiveData<List<WorkInfo>>
+    internal var outputWorkInfo: LiveData<List<WorkInfo>>
 
     init {
         imageUri = getImageUri(application.applicationContext)
@@ -47,7 +47,6 @@ class BlurViewModel(application: Application) : ViewModel() {
         // the UI is listening to changes
         outputWorkInfo = workmanager.getWorkInfosByTagLiveData(TAG_OUTPUT)
     }
-
 
 
     /**
@@ -59,8 +58,10 @@ class BlurViewModel(application: Application) : ViewModel() {
 
         //work request to cleanup
         var continuation = workmanager
-            .beginUniqueWork(IMAGE_MANIPULATION_WORK_NAME,ExistingWorkPolicy.REPLACE,
-                OneTimeWorkRequest.from(CleanUpWorker::class.java))
+            .beginUniqueWork(
+                IMAGE_MANIPULATION_WORK_NAME, ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequest.from(CleanUpWorker::class.java)
+            )
 
         // Add WorkRequests to blur the image the number of times requested
         for (i in 0 until blurLevel) {
@@ -71,7 +72,7 @@ class BlurViewModel(application: Application) : ViewModel() {
             // After the first blur operation the input will be the output of previous
             // blur operations.
             if (i == 0) {
-               blurBuilder.setInputData(createInputDataForUri())
+                blurBuilder.setInputData(createInputDataForUri())
             }
 
 
@@ -80,7 +81,8 @@ class BlurViewModel(application: Application) : ViewModel() {
 
 
         //work request to save
-        var save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).addTag(TAG_OUTPUT).build()
+        var save =
+            OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).addTag(TAG_OUTPUT).build()
         continuation = continuation.then(save)
 
         continuation.enqueue()
@@ -129,7 +131,8 @@ class BlurViewModel(application: Application) : ViewModel() {
         }
         return builder.build()
     }
-    internal fun cancelWork(){
 
+    internal fun cancelWork() {
+        workmanager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
     }
 }
