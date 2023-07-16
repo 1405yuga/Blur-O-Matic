@@ -129,4 +129,7 @@ class BlurViewModel(application: Application) : ViewModel() {
         }
         return builder.build()
     }
+    internal fun cancelWork(){
+
+    }
 }
