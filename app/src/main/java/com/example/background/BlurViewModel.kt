@@ -24,6 +24,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -57,7 +58,9 @@ class BlurViewModel(application: Application) : ViewModel() {
         //creating workchain
 
         //work request to cleanup
-        var continuation = workmanager.beginWith(OneTimeWorkRequest.from(CleanUpWorker::class.java))
+        var continuation = workmanager
+            .beginUniqueWork(IMAGE_MANIPULATION_WORK_NAME,ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequest.from(CleanUpWorker::class.java))
 
         // Add WorkRequests to blur the image the number of times requested
         for (i in 0 until blurLevel) {
